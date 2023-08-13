@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    tty: true
+    stdin_open: true
+    ports:
+      - 5173:5173
+    environment:
+      - VITE_WS_PORT=80
+    volumes:
+      - node_modules:/usr/app/node_modules
+      - ./client/src:/usr/app/src:ro
+      - ./client/.env:/usr/app/.env:ro
+      - ./client/package.json:/usr/app/package.json
+      - ./client/package-lock.json:/usr/app/package-lock.json
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    ports:
+      - 80:80
+    volumes:
+      - ./server/src:/go/app/src:ro
+      - server_db:/go/db
+      - ./server/.env:/go/app/.env:ro
+      - ./server/go.mod:/go/app/go.mod
+      - ./server/go.sum:/go/app/go.sum
+
+  redis:
+    image: redis:7.0.2
+    command: redis-server --appendonly yes
+    restart: always
+    # ports:
+    #   - 16379:6379
+    volumes:
+      - type: volume
+        source: redis-volume
+        target: /data
+
+volumes:
+  redis-volume:
+  node_modules:
+  server_db:
