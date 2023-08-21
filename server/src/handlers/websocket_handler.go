@@ -4,12 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rengotaku/simple_chat/src/domain"
 	"github.com/gorilla/websocket"
+	"github.com/rengotaku/simple_chat/src/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rengotaku/simple_chat/src/models"
-
 )
 
 type WebsocketHandler struct {
@@ -37,8 +36,8 @@ func (h *WebsocketHandler) Handle(c *gin.Context) {
 	}
 
 	upgrader := &websocket.Upgrader{
-    ReadBufferSize:  1024,
-    WriteBufferSize: 1024,
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},

@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/websocket"
 )
@@ -19,15 +19,20 @@ func NewClient(ws *websocket.Conn) *Client {
 }
 
 func (c *Client) ReadLoop(broadCast chan<- []byte, unregister chan<- *Client) {
+	log.Debug("Client:ReadLoop ~ start")
+
 	defer func() {
 		c.disconnect(unregister)
 	}()
 
 	for {
 		_, jsonMsg, err := c.ws.ReadMessage()
+
+		log.Debug("Client:ReadLoop:for ~ ", string(jsonMsg))
+
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("unexpected close error: %v", err)
+				log.Info("unexpected close error: %v", err)
 			}
 			break
 		}
@@ -37,6 +42,8 @@ func (c *Client) ReadLoop(broadCast chan<- []byte, unregister chan<- *Client) {
 }
 
 func (c *Client) WriteLoop() {
+	log.Debug("Client:WriteLoop ~ start")
+
 	defer func() {
 		c.ws.Close()
 	}()
@@ -44,12 +51,16 @@ func (c *Client) WriteLoop() {
 	for {
 		message := <-c.sendCh
 
+		log.Debug("Client:WriteLoop:for:message ~ ", string(message))
+
 		w, err := c.ws.NextWriter(websocket.TextMessage)
 		if err != nil {
+			log.Debug("Client:WriteLoop:for:err ~ ", err.Error())
 			return
 		}
 		w.Write(message)
 
+		log.Debug("Client:WriteLoop:for:len(c.sendCh) ~ ", len(c.sendCh))
 		for i := 0; i < len(c.sendCh); i++ {
 			w.Write(<-c.sendCh)
 		}
@@ -61,6 +72,7 @@ func (c *Client) WriteLoop() {
 }
 
 func (c *Client) disconnect(unregister chan<- *Client) {
+	log.Debug("Client:disconnect: ~ start")
 	unregister <- c
 	c.ws.Close()
 }

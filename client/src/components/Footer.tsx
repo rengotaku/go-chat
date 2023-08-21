@@ -1,9 +1,22 @@
 import React from "react";
 import { Flex, Input, Button } from "@chakra-ui/react";
 
-export const Footer = ({ inputMessage, setInputMessage, handleSendMessage }) => {
+type Props = {
+    inputMessage: string;
+    setInputMessage: React.Dispatch<React.SetStateAction<string>>;
+    handleSendMessage: () => void;
+}
+
+export const Footer: React.FC<Props> = ({ inputMessage, setInputMessage, handleSendMessage }) => {
   return (
-    <Flex w="100%" mt="5" p="3">
+    <Flex
+      w="100%"
+      mt="5"
+      p="3"
+      position="fixed"
+      bottom="0"
+      zIndex="1001"
+    >
       <Input
         placeholder="Type Something..."
         border="none"
@@ -35,4 +48,4 @@ export const Footer = ({ inputMessage, setInputMessage, handleSendMessage }) => 
       </Button>
     </Flex>
   );
-};
+}

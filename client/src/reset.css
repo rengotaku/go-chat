@@ -29,6 +29,8 @@ body {
     /* https://web-kin.com/2021/06/2868/ */
     overflow-wrap: break-all;
     word-break: break-all;
+    overflow-x : hidden;
+    -webkit-overflow-scrolling: touch;
 }
 ol, ul {
     list-style: none;

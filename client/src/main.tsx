@@ -48,12 +48,16 @@ class ErrorBoundary extends React.Component<{}, { hasError: boolean }> {
 }
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  // rendering twice, but this do not effect in production
+  // see@https://stackoverflow.com/a/65167384
   <React.StrictMode>
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ChakraProvider>
           <RecoilRoot>
-            <App />
+            <React.Suspense fallback={<div>Loading...</div>}>
+              <App />
+            </React.Suspense>
           </RecoilRoot>
         </ChakraProvider>
       </QueryClientProvider>

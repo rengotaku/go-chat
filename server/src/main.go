@@ -3,7 +3,6 @@ package main
 import (
 	// "fmt"
 
-	"log"
 	"net/http"
 	"os"
 
@@ -14,6 +13,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	log "github.com/sirupsen/logrus"
+
+	_ "time/tzdata"
 )
 
 type config struct {
@@ -40,13 +42,16 @@ func init() {
 	err := godotenv.Load(".env")
 
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Error("Error loading .env file")
+	}
+	models.InitMigration()
+
+	if gin.Mode() != gin.ReleaseMode {
+		log.SetLevel(log.DebugLevel)
 	}
 }
 
 func main() {
-	models.InitMigration()
-
 	pubsub := services.NewPubSubService()
 	hub := domain.NewHub(pubsub)
 	go hub.SubscribeMessages()
@@ -67,6 +72,6 @@ func main() {
 
 	err := r.Run(":80")
 	if err != nil {
-		log.Panicln("[Error] failed to start Gin server due to: " + err.Error())
+		log.Panic("[Error] failed to start Gin server due to: " + err.Error())
 	}
 }

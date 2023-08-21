@@ -20,6 +20,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",
     "recoil": "^0.7.4",
+    "recoil-persist": "^5.1.0",
     "websocket": "^1.0.34"
   },
   "devDependencies": {
