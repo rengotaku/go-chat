@@ -1,4 +1,6 @@
-export type User = {
-  roomId: string;
-  uuid: string;
-};
+export interface User {
+  roomId: string
+  uuid: string
+  username: string
+  bearer: string
+}

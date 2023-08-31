@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/rengotaku/simple_chat/src/auth"
 	"github.com/rengotaku/simple_chat/src/domain"
 
 	"github.com/gin-gonic/gin"
@@ -27,10 +28,24 @@ func (h *WebsocketHandler) Handle(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	var count int64
-	db.Model(&models.Room{}).Where("room_id = ?", c.Query("roomId")).Count(&count)
+	bearer := c.Query("bearer")
 
-	if count == 0 {
+	if bearer == "" {
+		c.JSON(http.StatusNotFound, gin.H{})
+	}
+
+	claim, err := auth.ValidateToken(bearer)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"errorMessage": "Not found room.",
+		})
+		return
+	}
+
+	var room *models.Room
+	db.Model(&models.Room{}).Where("room_id = ?", claim.RoomID).First(&room)
+
+	if room == nil {
 		c.JSON(http.StatusNotFound, gin.H{})
 		return
 	}
@@ -47,7 +62,16 @@ func (h *WebsocketHandler) Handle(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	client := domain.NewClient(ws)
+	client := domain.NewClient(claim.GetName(), claim.GetId(), *room, ws)
+
+	if clns, ok := h.hub.Rooms[room]; ok { // exists room already
+		clns[client] = true
+	} else {
+		h.hub.Rooms[room] = map[*domain.Client]bool{client: true}
+
+		go h.hub.SubscribeMessages(room)
+	}
+
 	go client.ReadLoop(h.hub.BroadcastCh, h.hub.UnRegisterCh)
 	go client.WriteLoop()
 	h.hub.RegisterCh <- client

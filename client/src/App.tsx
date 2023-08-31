@@ -1,13 +1,13 @@
-import './reset.css';
+import './reset.css'
 
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import history from './history';
+import React from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import history from './history'
 
-import { Top } from "./pages/Top";
-import { Room } from "./pages/Room";
+import { Top } from './pages/Top'
+import { Room } from './pages/Room'
 
-export const App = () => {
+export const App: React.FC = () => {
   return (
     <Router history={history}>
       <Routes>
@@ -21,5 +21,5 @@ export const App = () => {
         />
       </Routes>
     </Router>
-  );
-};
+  )
+}

@@ -1,26 +1,20 @@
-import axios from 'axios';
+import axios from 'axios'
 
-export type InputsType = {
+export interface InputsType {
   roomId: string
+  username: string
+  bearer: string
 }
 
-export const ShowRoomFetch = (data :InputsType) => {
-  const url = `http://${import.meta.env.VITE_BACKEND_URL}/room/${data.roomId}`;
-  return axios.get(
+export const ShowRoomFetch: any = async (data: InputsType) => {
+  let url = `http://${import.meta.env.VITE_BACKEND_URL}/room/${data.roomId}`
+
+  return await axios.get(
     url, {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json;charset=utf-8'
-    },
-  });
-  // .catch(function (error) {
-  //   console.log("エラー内容:", error);
-  //   // toast({
-  //   //   title: 'サーバーエラー',
-  //   //   description: "運営者の操作ミスにより、ページが表示されません。",
-  //   //   status: 'error',
-  //   //   duration: 9000,
-  //   // })
-  // });
+      params: { username: data.username, bearer: data.bearer },
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=utf-8'
+      }
+    })
 }
-

@@ -27,8 +27,8 @@ footer, header, hgroup, menu, nav, section {
 body {
     line-height: 1;
     /* https://web-kin.com/2021/06/2868/ */
-    overflow-wrap: break-all;
-    word-break: break-all;
+    overflow-wrap: break-word;
+    word-break: break-word;
     overflow-x : hidden;
     -webkit-overflow-scrolling: touch;
 }

@@ -1,8 +1,8 @@
-import React from "react";
-import { Flex, Avatar, AvatarBadge, Text } from "@chakra-ui/react";
+import React from 'react'
+import { Flex, Text } from '@chakra-ui/react'
 
-type Props = {
-    title: string;
+interface Props {
+  title: string
 }
 
 export const Header: React.FC<Props> = ({ title }) => {
@@ -19,7 +19,7 @@ export const Header: React.FC<Props> = ({ title }) => {
       <Text fontSize="lg" fontWeight="bold" ml="3">
         { title }
       </Text>
-{/* 
+{/*
       <Avatar size="lg" name="Dan Abrahmov" src="https://bit.ly/dan-abramov">
         <AvatarBadge boxSize="1.25em" bg="green.500" />
       </Avatar>
@@ -31,5 +31,5 @@ export const Header: React.FC<Props> = ({ title }) => {
       </Flex>
  */}
     </Flex>
-  );
-};
+  )
+}

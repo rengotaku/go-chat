@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+	"github.com/rengotaku/simple_chat/src/auth"
 	"github.com/rengotaku/simple_chat/src/models"
 )
 
@@ -42,8 +43,47 @@ func (h *RoomHandler) ShowHandle(c *gin.Context) {
 		return
 	}
 
+	var claim *auth.Claims
+	bearer := c.Query("bearer")
+
+	if bearer == "" {
+		uname := c.Query("username")
+
+		if uname == "" {
+			c.JSON(http.StatusNotFound, gin.H{
+				"errorMessage": "Not found room.",
+			})
+			return
+		}
+
+		claim = &auth.Claims{
+			ID:     generateUuid()[0:5],
+			Name:   uname,
+			RoomID: room.RoomId,
+		}
+
+		bearer, err = auth.CreateJWTToken(*claim)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"errorMessage": "Not found room.",
+			})
+			return
+		}
+	} else {
+		claim, err = auth.ValidateToken(bearer)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"errorMessage": "Not found room.",
+			})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"title": room.Title,
+		"title":    room.Title,
+		"uuid":     claim.GetId(),
+		"username": claim.GetName(),
+		"bearer":   bearer,
 	})
 }
 

@@ -54,7 +54,6 @@ func init() {
 func main() {
 	pubsub := services.NewPubSubService()
 	hub := domain.NewHub(pubsub)
-	go hub.SubscribeMessages()
 	go hub.RunLoop()
 
 	r := gin.Default()

@@ -1,13 +1,19 @@
-import React from "react";
-import { Flex, Input, Button } from "@chakra-ui/react";
+import React from 'react'
+import { Flex, Input, Button } from '@chakra-ui/react'
+import { useSendMessage } from '../hooks/use-send-message'
 
-type Props = {
-    inputMessage: string;
-    setInputMessage: React.Dispatch<React.SetStateAction<string>>;
-    handleSendMessage: () => void;
+interface Props {
+  inputMessage: string
+  setInputMessage: React.Dispatch<React.SetStateAction<string>>
+  handleSendMessage: () => void
 }
 
 export const Footer: React.FC<Props> = ({ inputMessage, setInputMessage, handleSendMessage }) => {
+  const { input, setInput, send } = useSendMessage()
+  inputMessage = input
+  setInputMessage = setInput
+  handleSendMessage = send
+
   return (
     <Flex
       w="100%"
@@ -22,24 +28,24 @@ export const Footer: React.FC<Props> = ({ inputMessage, setInputMessage, handleS
         border="none"
         borderRadius="none"
         _focus={{
-          border: "1px solid black",
+          border: '1px solid black'
         }}
-        onKeyPress={(e) => {
-          if (e.key === "Enter") {
-            handleSendMessage();
+        onKeyPress={(e: { key: string }) => {
+          if (e.key === 'Enter') {
+            handleSendMessage()
           }
         }}
         value={inputMessage}
-        onChange={(e) => setInputMessage(e.target.value)}
+        onChange={(e: { target: { value: React.SetStateAction<string> } }) => { setInputMessage(e.target.value) }}
       />
       <Button
         bg="black"
         color="white"
         borderRadius="none"
         _hover={{
-          bg: "white",
-          color: "black",
-          border: "1px solid black",
+          bg: 'white',
+          color: 'black',
+          border: '1px solid black'
         }}
         disabled={inputMessage.trim().length <= 0}
         onClick={handleSendMessage}
@@ -47,5 +53,5 @@ export const Footer: React.FC<Props> = ({ inputMessage, setInputMessage, handleS
         Send
       </Button>
     </Flex>
-  );
+  )
 }
